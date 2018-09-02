@@ -1,0 +1,28 @@
+CC=mips-openwrt-linux-gcc
+
+PATH_TO_SSL = /root/binwolfssl
+PATH_TO_CURL = /root/curl-7.61.0
+PATH_TO_MYHTML = /root/myhtml
+
+LDFLAGS=-static $(PATH_TO_MYHTML)/lib/libmyhtml_static.a $(PATH_TO_CURL)/lib/libcurl.a $(PATH_TO_SSL)/lib/libwolfssl.a
+
+CFLAGS= -Wall -I $(PATH_TO_SSL)/include -I $(PATH_TO_CURL)/include -I $(PATH_TO_MYHTML)/include 
+
+communicator: bin communicator.o utils.o continuum.o
+	$(CC) communicator.o utils.o continuum.o -o bin/continuum.mikrotik $(LDFLAGS)  
+
+communicator.o:
+	$(CC) -c src/communicator.c $(CFLAGS) 
+
+utils.o:
+	$(CC) -c src/utils.c $(CFLAGS) 
+
+continuum.o:
+	$(CC) -c src/continuum.c $(CFLAGS) 
+
+bin:
+	mkdir -p bin
+
+clean:
+	rm -rf src/continuum.mikrotik
+	rm -rf *.o
